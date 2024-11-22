@@ -19,7 +19,7 @@ void _start() {
         "mov $4, %%rax\n"             // syscall: write (FreeBSD uses 4)
         "mov $1, %%rdi\n"             // file descriptor: stdout (1)
         "mov %0, %%rsi\n"             // pointer to message
-        "mov $13, %%rdx\n"            // message length (13 bytes)
+        "mov $14, %%rdx\n"            // message length (13 bytes+\n)
         "syscall\n"
         :
         : "r"(msg)
