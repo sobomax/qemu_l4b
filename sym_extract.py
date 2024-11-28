@@ -31,7 +31,7 @@ def find_structs_and_defines_in_directory(directory_path, struct_names, define_n
                         continue
                     if debug:
                         print(f"Searching for struct '{struct_name}' in file: {file_path}", file=sys.stderr)
-                    struct_pattern = re.compile(r'struct\s+' + re.escape(struct_name) + r'\s*\{([^\}]*)\}\s*;', re.DOTALL)
+                    struct_pattern = re.compile(r'^struct\s+' + re.escape(struct_name) + r'\s*\{(.*?)^\};', re.DOTALL | re.MULTILINE)
                     match = struct_pattern.search(content)
                     if match:
                         if debug:
