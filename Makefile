@@ -7,7 +7,7 @@ SRC_hello_mid = mid.c
 SRC_hello_max = mid.c
 OUT = hello_min hello_mid hello_max target_os_defs.h
 
-SYM_DIRS = sys netinet netinet6
+SYM_DIRS = sys net netinet netinet6 opencrypto net80211
 
 .for dir in ${SYM_DIRS}
 SYM_SRCS += syms_${dir}.econf
@@ -28,7 +28,7 @@ hello_mid: $(SRC_hello_mid)
 hello_max: $(SRC_hello_max)
 	$(CC) $(CFLAGS_hello_max) -o $@ $(SRC_$(@))
 
-target_os_defs.h: sym_extract.py ${SYM_SRCS}
+target_os_defs.h: sym_extract.py StructDefFinder.py ${SYM_SRCS}
 	rm -f $@ $@.tmp
 	python sym_extract.py ~/projects/freebsd13/sys/sys syms_sys.econf  >> $@.tmp
 .for dir in ${SYM_DIRS:Nsys}
