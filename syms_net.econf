@@ -1,0 +1,10 @@
+{
+    'defines' : (
+      'IFSTATMAX', 'IF_NAMESIZE', 'IFNAMSIZ', 'GREGKEY', 'GIFGOPTS',
+      'SIOCGLAGGPORT', 'ETHER_ADDR_LEN', 'SIOCGLAGG', 'SIOCGLAGGFLAGS',
+    ),
+    'structs'  : (
+      'ifstat', 'ifmediareq', 'ifgroupreq', 'ifdrv', 'lacp_opreq',
+      'lagg_reqport', 'lagg_reqflags', 'lagg_reqall',
+    ),
+}

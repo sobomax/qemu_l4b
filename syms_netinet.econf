@@ -1,7 +1,7 @@
 {
     'defines' : (
       'IP_RECVOPTS', 'IP_RECVDSTADDR', 'IP_RECVRETOPTS', 'IP_PORTRANGE',
-      'IP_RECVIF', 'IP_RETOPTS', 'IP_BINDANY', 'IP_ONESBCAST'
+      'IP_RECVIF', 'IP_RETOPTS', 'IP_BINDANY', 'IP_ONESBCAST', 'SIOCGVH'
     ),
     'structs'  : tuple(),
 }

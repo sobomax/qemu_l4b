@@ -1,0 +1,8 @@
+{
+    'defines' : (
+      'SIOCG80211',
+    ),
+    'structs'  : (
+      'ieee80211req',
+    ),
+}

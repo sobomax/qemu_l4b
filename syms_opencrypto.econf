@@ -1,0 +1,8 @@
+{
+    'defines' : (
+      'CIOCGSESSION',
+    ),
+    'structs'  : (
+      'session_op',
+    ),
+}
