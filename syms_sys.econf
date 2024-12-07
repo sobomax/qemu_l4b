@@ -167,9 +167,13 @@
       'F_DUP2FD_CLOEXEC', 'F_GETFD', 'F_SETFD', 'F_GETFL', 'F_SETFL',
       'F_GETOWN', 'F_SETOWN', 'F_GETLK', 'F_SETLK', 'F_SETLKW',
       'WNOHANG', 'WUNTRACED', 'WCONTINUED', 'WNOWAIT', 'WEXITED', 'WTRAPPED',
-      'KERN_ARND', 'KERN_OSTYPE', 'KERN_OSRELEASE', 'KERN_VERSION'
+      'KERN_ARND', 'KERN_OSTYPE', 'KERN_OSRELEASE', 'KERN_VERSION',
+      'FREEBSD_ABI_VENDOR', 'PRI_TIMESHARE', 'PRI_REALTIME', 'PRI_IDLE',
+      'PRI_FIFO', 'PRI_FIFO_BIT', 'KERN_HOSTNAME',
     ),
-    'structs'  : ('freebsd11_dirent', 'fiodgname_arg',),
+    'structs' : ('freebsd11_dirent', 'fiodgname_arg', 'rtprio', 'umutex',
+      '_umtx_time'),
+    'structs_norecurse' : ('timespec',),
     'defines_forcehost' : (
       'TIOCSETD', 'TIOCGETD', 'TIOCSBRK', 'TIOCCBRK', 'TIOCSDTR',
       'TIOCCDTR', 'TIOCGPGRP', 'TIOCSPGRP', 'TIOCGETA', 'TIOCSETA',
@@ -204,6 +208,10 @@
       'EPROTOTYPE', 'ERANGE', 'ERELOOKUP', 'EREMOTE', 'ERESTART', 'EROFS',
       'ERPCMISMATCH', 'ESHUTDOWN', 'ESOCKTNOSUPPORT', 'ESPIPE', 'ESRCH',
       'ESTALE', 'ETIMEDOUT', 'ETOOMANYREFS', 'ETXTBSY', 'EUSERS', 'EWOULDBLOCK',
-      'EXDEV'
+      'EXDEV', 'RTP_PRIO_REALTIME', 'RTP_PRIO_NORMAL', 'RTP_PRIO_FIFO',
+      'RTP_PRIO_IDLE', 'RTP_PRIO_MAX', 'RTP_PRIO_MIN', 'RTP_LOOKUP', 'RTP_SET',
+      'SEEK_CUR', 'MAXNAMLEN', 'RFSPAWN', 'CPU_LEVEL_WHICH', 'CPU_WHICH_TID',
+      'UTIME_NOW', 'UTIME_OMIT', 'CLOCK_REALTIME', 'CLOCK_MONOTONIC',
+      'CLOCK_UPTIME', 'CLOCK_SECOND'
     ),
 }
