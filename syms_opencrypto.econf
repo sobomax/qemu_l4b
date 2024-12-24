@@ -2,6 +2,9 @@
     'defines' : (
       'CIOCGSESSION',
     ),
+    'defines_forcetarget' : (
+      '_IOWR',
+    ),
     'structs'  : (
       'session_op',
     ),

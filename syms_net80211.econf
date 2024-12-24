@@ -2,6 +2,9 @@
     'defines' : (
       'SIOCG80211',
     ),
+    'defines_forcetarget' : (
+      'IFNAMSIZ', '_IOWR',
+    ),
     'structs'  : (
       'ieee80211req',
     ),

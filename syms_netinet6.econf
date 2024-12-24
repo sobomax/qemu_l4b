@@ -8,8 +8,11 @@
       'SIOCGIFALIFETIME_IN6', 'SIOCGIFPSRCADDR_IN6', 'SIOCGIFINFO_IN6',
       'SIOCGDEFIFACE_IN6',
     ),
+    'defines_forcetarget' : (
+      'IFNAMSIZ', '_IOWR',
+    ),
     'structs'  : (
-      'in6_ifreq', 'in6_ndireq', 'in6_ndifreq',
+      'sockaddr_in6', 'in6_ifreq', 'in6_ndireq', 'in6_ndifreq',
     ),
     'structs_norecurse' : (
       'sockaddr_in6',

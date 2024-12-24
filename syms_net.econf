@@ -1,10 +1,16 @@
 {
-    'defines' : (
+    'defines_target' : (
       'IFSTATMAX', 'IF_NAMESIZE', 'IFNAMSIZ', 'GREGKEY', 'GIFGOPTS',
       'SIOCGLAGGPORT', 'ETHER_ADDR_LEN', 'SIOCGLAGG', 'SIOCGLAGGFLAGS',
     ),
+    'defines_forcetarget' : (
+      '_IOWR', 'ifr_flags', 'ifr_metric',
+    ),
+    'structs_norecurse' : (
+      'sockaddr',
+    ),
     'structs'  : (
-      'ifstat', 'ifmediareq', 'ifgroupreq', 'ifdrv', 'lacp_opreq',
-      'lagg_reqport', 'lagg_reqflags', 'lagg_reqall',
+      'ifreq', 'ifstat', 'ifmediareq', 'ifgroupreq', 'ifdrv', 'lacp_opreq',
+      'lagg_reqport', 'lagg_reqflags', 'lagg_reqall', 'ifconf'
     ),
 }
