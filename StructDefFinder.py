@@ -11,17 +11,20 @@ class StructDefFinder:
         structs = config.get("structs", tuple())
         defines = config.get("defines", tuple())
         defs_forcehost = config.get("defines_forcehost", tuple())
+        defs_forcetarget = config.get("defines_forcetarget", tuple())
         defs_target = config.get("defines_target", tuple())
         str_norecurse = config.get("structs_norecurse", tuple())
-        if not any(isinstance(x, (list, tuple)) for x in (structs, defines, defs_forcehost, defs_target, str_norecurse)):
+        if not any(isinstance(x, (list, tuple)) for x in (structs, defines, defs_forcehost, defs_forcetarget, defs_target, str_norecurse)):
             raise ValueError("'structs' and 'defines' must be lists or tuples.")
-        self.defines = defines + defs_forcehost + defs_target
-        ddup = tuple(d for d in self.defines if self.defines.count(d) > 1)
+        _defines = defines + defs_forcehost + defs_target + defs_forcetarget
+        ddup = tuple(d for d in _defines if _defines.count(d) > 1)
         if ddup:
             raise ValueError(f"Duplicate defines: {ddup}")
+        self.defines = defines + defs_forcehost + defs_target
         self.directory = directory
         self.structs = structs
         self.defs_forcehost = defs_forcehost
+        self.defs_forcetarget = defs_forcetarget
         self.defs_target = defs_target
         self.str_norecurse = str_norecurse
         self.debug = debug
@@ -54,14 +57,15 @@ class StructDefFinder:
                         continue
                     if self.debug:
                         print(f"Looking for struct '{s_name}' in: {path}", file=stderr)
-                    pattern = re.compile(r'^struct\s+' + re.escape(s_name) + r'\s*\{(.*?)^\};', re.DOTALL | re.MULTILINE)
+                    pattern = re.compile(r'^struct\s+' + re.escape(s_name) + r'(\s*\{)(.*?)(^\};)', re.DOTALL | re.MULTILINE)
                     match = pattern.search(content)
                     if match:
                         if self.debug:
                             print(f"Found struct '{s_name}' in: {path}", file=stderr)
-                        self.find_refs_in_file(path, match.group(1), is_top_level=False)
-                        self.found_structs.append((s_name, match.group(0), path))
+                        sdef = match.group(1) + match.group(2) + match.group(3)
+                        self.found_structs.append((s_name, sdef, path))
                         not_found_structs.discard(s_name)
+                        self.find_refs_in_file(path, match.group(2), is_top_level=False)
 
                 if is_top_level:
                     for d_name in defines:
@@ -95,11 +99,12 @@ class StructDefFinder:
                 if not any(ref == found[0] for found in self.found_structs):
                     if self.debug:
                         print(f"Searching for '{ref}' in same file '{path}'", file=stderr)
-                    pattern = re.compile(r'struct\s+' + re.escape(ref) + r'\s*\{([^\}]*)\}\s*;', re.DOTALL)
+                    pattern = re.compile(r'struct\s+' + re.escape(ref) + r'(\s*\{)([^\}]*)(\}\s*;)', re.DOTALL)
                     match = pattern.search(content)
                     if match:
-                        self.find_refs_in_file(path, match.group(1), is_top_level=False)
-                        self.found_structs.append((ref, match.group(0), path))
+                        self.find_refs_in_file(path, match.group(2), is_top_level=False)
+                        sdef = match.group(1) + match.group(2) + match.group(3)
+                        self.found_structs.append((ref, sdef, path))
                     else:
                         if not is_top_level:
                             print(f"Warning: '{ref}' not found in '{path}'", file=stderr)
@@ -135,6 +140,21 @@ class StructDefFinder:
         r += tuple(next(_s for _s in self.found_structs if _s[0] == sn) for sn in self.structs)
         return r
 
+    def translate_target_defs(self, dbody, pref='TARGET_'):
+        sspace = tuple(self.defs_target + self.defs_forcetarget)
+        if not sspace:
+            return dbody
+        pattern = r'\b(' + '|'.join(re.escape(keyword) for keyword in sspace) + r')\b'
+        return re.sub(pattern, lambda match:  pref + match.group(1), dbody)
+
+    def translate_target_structs(self, dbody, pref='target_'):
+        sspace = tuple(x for x, _, _ in self.found_structs) + tuple(y for y in self.str_norecurse)
+        if not sspace:
+            return dbody
+        pattern = r'\b(struct.*?)\b(' + '|'.join(re.escape(keyword) for keyword in sspace) + r')\b'
+        res = re.sub(pattern, lambda match: match.group(1) + pref + match.group(2), dbody)
+        return res
+
     def print_results(self):
         if not self.found_structs and not self.found_defines:
             print("\nNo structs or defines found.", file=stderr)
@@ -150,13 +170,15 @@ class StructDefFinder:
         print_structs = self.sort_found_structs()
         if print_structs:
             print("\n/* Forward declarations: */")
-            decls = tuple(f"struct {name};" for name, _, _ in print_structs)
+            decls = tuple(f"struct target_{name};" for name, _, _ in print_structs)
             for decl in decls:
                 print(decl)
         if self.found_defines:
             print("\n/* Defines: */")
             def get_def(dn, definition):
-                return f'#define {dn}{fixup_comments(definition)}'
+                dd = self.translate_target_defs(definition)
+                dd = self.translate_target_structs(dd)
+                return f'#define {dn}{fixup_comments(dd)}'
             def get_tgt(path):
                 return f'/* found in: {s_path(path)} */'
             def join_str(*a):
@@ -193,7 +215,9 @@ class StructDefFinder:
             print("\n/* Struct definitions: */")
             for name, definition, path in print_structs:
                 print(f"\n/* '{name}' found in: {s_path(path)} */")
-                print(definition)
+                sd = self.translate_target_defs(definition)
+                sd = self.translate_target_structs(sd)
+                print(f'struct target_{name} {sd}')
 
 
 def fixup_comments(s):
